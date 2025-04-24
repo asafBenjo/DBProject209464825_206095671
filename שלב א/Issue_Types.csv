@@ -1,0 +1,11 @@
+issue_type_id,issue_type_name,priority
+1,Buffering Issues,4
+2,Login Problems,3
+3,Audio Out of Sync,3
+4,Subtitle Errors,2
+5,App Crashing,5
+6,Video Quality Problems,1
+7,Device Not Supported,2
+8,Payment Failure,2
+9,Profile Settings Error,2
+10,Streaming Not Starting,4
