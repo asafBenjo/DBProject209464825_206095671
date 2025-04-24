@@ -60,8 +60,8 @@
 הקשרים בין User ל-Support_Tickets, Issue_Types ל-Support_Tickets ו-Support_Agent ל-Support_Tickets ול-Support_Responses מיוצגים כקשרים לא מזהים (קו מקווקו בתוך מעוין הקשר). משמעות הדבר היא שהמפתח הראשי של הישות החזקה (User, Issue_Types, Support_Agent) מופיע כישות החלשה (Support_Tickets, Support_Responses) כמפתח זר, אך אינו חלק מהמפתח הראשי שלה. זה מצביע על קשר, אך הישות התלויה יכולה להתקיים באופן עצמאי (לדוגמה, טיקט קיים גם אם אין לו עדיין סוכן מטפל).
 החלטות עיצוב אלו נתקבלו במטרה ליצור מודל נתונים ברור, יעיל וגמיש שיכול לתמוך בפונקציונליות הנדרשת של מערכת התמיכה הטכנית של נטפליקס ולאפשר ניהול נתונים אפקטיבי.
 
-![צילום מסך של פייתון](./images/data_input_form.png)
+![צילום מסך של  הקובץ פייתון](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/Programing/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-04-07%20215707.png)
 
-![צילום מסך של mokaroo](./images/data_input_form.png)
+![צילום מסך של ה Mockaroo](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/mockarooFiles/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-04-07%20213507.png)
 
-![צילום מסך של הגיבוי](./images/data_input_form.png)
+![צילום מסך של הגיבוי](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/%D7%92%D7%99%D7%91%D7%95%D7%99.png)
