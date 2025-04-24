@@ -30,5 +30,5 @@ DBProject209464825_206095671/
 This project is licensed under the [Your License Here].
 
 ## Authors
-- Author 1: [Your Name] (ID: 209464825)
+- Author 1: Evyatar (ID: 209464825)
 - Author 2: [Your Name] (ID: 206095671)
