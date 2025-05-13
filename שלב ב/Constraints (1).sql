@@ -9,3 +9,6 @@ ALTER COLUMN status SET NOT NULL;
 
 ALTER TABLE issue_types
 ALTER COLUMN priority SET DEFAULT 1;
+
+
+
