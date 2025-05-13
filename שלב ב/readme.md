@@ -12,7 +12,7 @@ WHERE t.ticket_id IN (
 GROUP BY u.username, u.email
 ORDER BY open_tickets DESC;
 ```
-![שאילתה 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/dsd1.png)
+![שאילתה 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%201.png)
 
 ## 2. זמן טיפול ממוצע לפי סוג בעיה
 
@@ -24,7 +24,7 @@ JOIN Ticket_Status ts ON t.ticket_id = ts.ticket_id
 JOIN Issue_Types it ON t.issue_type_id = it.issue_type_id
 GROUP BY it.issue_type_name;
 ```
-![שאילתה 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/dsd1.png)
+![שאילתה 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%202.png)
 
 ## 3. מספר קריאות שטופלו ע"י נציג כל חודש
 
@@ -38,7 +38,7 @@ JOIN Support_Agent sa ON sr.support_agent_id = sa.support_agent_id
 GROUP BY sa.support_agent_id, sa.agent_name, TO_CHAR(t.ticket_date, 'YYYY-MM')
 ORDER BY sa.support_agent_id ASC, year_month ASC;
 ```
-![שאילתה 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/dsd1.png)
+![שאילתה 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%203.png)
 
 ## 4. קריאות שטופלו בהצלחה (סטטוס Resolved) לכל משתמש
 
@@ -52,7 +52,7 @@ WHERE t.ticket_id IN (
 GROUP BY u.user_id, u.username
 ORDER BY u.user_id ASC;
 ```
-![שאילתה 4](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/dsd1.png)
+![שאילתה 4](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%204.png)
 
 ## 5. פרטי קריאה, סטטוס אחרון ונציג
 
@@ -68,7 +68,7 @@ WHERE ts.modified_date = (
     SELECT MAX(modified_date) FROM Ticket_Status WHERE ticket_id = t.ticket_id
 );
 ```
-![שאילתה 5](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/dsd1.png)
+![שאילתה 5](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%205.png)
 
 ## 6. ממוצע תגובות לפי סוג בעיה
 
@@ -83,7 +83,7 @@ FROM (
 JOIN Issue_Types it ON subq.issue_type_id = it.issue_type_id
 GROUP BY it.issue_type_name;
 ```
-![שאילתה 6](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/dsd1.png)
+![שאילתה 6](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%94%206.png)
 
 ## 7. תגובות לקריאה מסוימת
 
@@ -108,7 +108,7 @@ JOIN Support_Agent sa ON sr.support_agent_id = sa.support_agent_id
 GROUP BY sa.agent_name, TO_CHAR(sr.response_date, 'YYYY-MM')
 ORDER BY sa.agent_name, year_month;
 ```
-![שאילתה 8](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/dsd1.png)
+![שאילתה 8](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%208.png)
 
 # DELETE
 
