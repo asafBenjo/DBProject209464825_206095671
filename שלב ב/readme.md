@@ -94,7 +94,6 @@ JOIN Support_Agent sa ON sr.support_agent_id = sa.support_agent_id
 WHERE sr.ticket_id = 123
 ORDER BY sr.response_date DESC;
 ```
-![שאילתה 7](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/dsd1.png)
 
 ## 8. מספר תגובות של נציג לפי חודש
 
@@ -112,12 +111,20 @@ ORDER BY sa.agent_name, year_month;
 
 # DELETE
 
-## 1. מחיקת תגובות מלפני שנה
+## 1.  מחיקת טיקטים שהסטטוס שלהם 'Resolved' ותאריך העדכון האחרון הוא יותר מחודש
 
 ```sql
-DELETE FROM Support_Responses
-WHERE response_date < (CURRENT_DATE - INTERVAL '1 year');
+DELETE FROM Ticket_Status
+WHERE ticket_id IN (
+    SELECT ticket_id
+    FROM Ticket_Status
+    WHERE status = 'Resolved'
+      AND modified_date < (CURRENT_DATE - INTERVAL '1 month')
+);
+
 ```
+![מחיקה 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20delete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-04-28%20164229.png)
+
 
 ## 2. מחיקת תגובות לקריאות ישנות (לפני 6 במאי 2022)
 
@@ -128,6 +135,7 @@ WHERE ticket_id IN (
     WHERE ticket_date < '2022-05-06'
 );
 ```
+![מחיקה 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20delete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20151930.png)
 
 ## 3. מחיקת נציגים שלא הגיבו באף קריאה
 
@@ -137,6 +145,7 @@ WHERE support_agent_id NOT IN (
     SELECT DISTINCT support_agent_id FROM Support_Responses
 );
 ```
+![מחיקה 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20delete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-04-28%20165512.png)
 
 # UPDATE
 
@@ -147,6 +156,7 @@ UPDATE Ticket_Status
 SET status = 'Resolved', modified_date = CURRENT_DATE
 WHERE status_id = '3';
 ```
+![עדכון 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20up%20dete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20141335.png)
 
 ## 2. קידום נציגים לרמת Senior Agent
 
@@ -160,6 +170,7 @@ WHERE support_agent_id IN (
     HAVING COUNT(DISTINCT sr.ticket_id) > 4
 );
 ```
+![עדכון 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20up%20dete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20153333.png)
 
 ## 3. עדכון עדיפות לבעיה מסוג Buffering Issues
 
@@ -170,3 +181,4 @@ FROM Issue_Types it
 JOIN Support_Tickets st ON it.issue_type_id = st.issue_type_id
 WHERE it.issue_type_name = 'Buffering Issues';
 ```
+![עדכון 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20up%20dete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20152734.png)
