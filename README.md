@@ -14,21 +14,11 @@
 
 ## מבוא
 
-<<<<<<< HEAD
-פתיחת פניית תמיכה (טיקט) על ידי משתמש עם תיאור הבעיה.
-סיווג הטיקט לסוג פנייה מתאים.
-מעקב אחר סטטוס הטיפול בטיקט על ידי המשתמש וצוות התמיכה.
-תיעוד כל התקשורת והפעולות שבוצעו לפתרון הבעיה באמצעות תגובות.
-ניהול ועדכון סטטוסי הטיפול השונים.
-ניהול פרטי המשתמשים וצוות התמיכה.
-מטרת המערכת היא לספק למשתמשי נטפליקס מענה יעיל ומקצועי לבעיות טכניות, תוך שמירה על תיעוד מסודר של כל פנייה ושלבי הטיפול בה.                                                           ![צילום מסך של erd](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/erd.png?raw=true)
-=======
 מערכת התמיכה הטכנית של נטפליקס נועדה לסייע למשתמשים בהתמודדות עם בעיות טכניות שונות, כגון:
 - קשיי התחברות
 - בעיות בהפעלת תכנים
 - תקלות בתצוגה
 - קשיים בניווט באפליקציה ובאתר
->>>>>>> ee53c4a043a0efeef2be65b7057bad5214b3de67
 
 המערכת מאפשרת למשתמשים ליצור קשר עם צוות התמיכה ולתאר את הבעיה. כל פנייה (טיקט) מתועדת ומטופלת על ידי נציגי התמיכה.
 
@@ -72,63 +62,85 @@
 ---
 
 ## החלטות עיצוב ונימוקים - מודל ERD
+<div dir="rtl">
 
-### 1. ישויות מרכזיות:
+</div>
 
-- **User:**  
-  ישות עיקרית המזוהה לפי `user_id`, כוללת גם `email`, `username`.
+## 1. ישויות מרכזיות
+<div dir="rtl">
+  <p dir="rtl"><strong>User:</strong></p>
+  <p dir="rtl">ישות זו מייצגת את המשתמשים במערכת. כל משתמש מזוהה באמצעות <code>user_id</code>, ויש לו פרטי קשר נוספים כמו <code>email</code> ו-<code>username</code>.</p>
+  <p dir="rtl">הסבר: ישות זו חיונית לזיהוי המשתמשים ומעקב אחרי כל בקשה/פנייה שלהם.</p>
 
-- **Issue_Types:**  
-  מאפשרת ניהול סוגי בעיות. כוללת `issue_type_name`, `priority`.
+  <p dir="rtl"><strong>Issue_Types:</strong></p>
+  <p dir="rtl">ישות זו מייצגת את סוגי הבעיות שיכולות להתרחש במהלך השימוש בנטפליקס. כל סוג פנייה מוגדר עם <code>issue_type_name</code> (שם הבעיה) ו-<code>priority</code> (העדיפות שלה).</p>
+  <p dir="rtl">הסבר: ישות זו מאפשרת לנו למיין את כל הפניות לפי סוג, דבר שמקל על ניהול התשובות והטיפול בבעיות.</p>
 
-- **Support_Tickets:**  
-  ישות הליבה. כוללת `ticket_id`, `issue_description`, `ticket_date`.  
-  מקושרת ל-User, Issue_Types, Ticket_Status, Support_Responses, Support_Agent.
+  <p dir="rtl"><strong>Support_Tickets:</strong></p>
+  <p dir="rtl">זו ישות הליבה של המערכת, המייצגת את הפניות עצמם. כל טיקט מכיל מזהה (<code>ticket_id</code>), תיאור הבעיה (<code>issue_description</code>), ותאריך פתיחת הפנייה (<code>ticket_date</code>).</p>
+  <p dir="rtl">הסבר: כל פנייה נפתחת על ידי משתמש, שיכולה להיות קשורה לסוג בעיה מסוים. טיקט משדר את כל פרטי הפנייה לניהול ומעקב.</p>
 
-- **Ticket_Status:**  
-  תיעוד שלבי הטיפול, כולל `status_id`, `status`, `modified_date`.
+  <p dir="rtl"><strong>Support_Responses:</strong></p>
+  <p dir="rtl">ישות זו מתעדת את התגובות של סוכן התמיכה, כולל <code>response_id</code>, <code>response_description</code> (תיאור התגובה) ו-<code>response_date</code> (תאריך התגובה).</p>
+  <p dir="rtl">הסבר: כל פנייה עלולה לקבל תגובות רבות במהלך הטיפול בה. תגובות אלו נרשמות בישות זו למעקב וניהול.</p>
 
-- **Support_Responses:**  
-  תיעוד התקשורת, כולל `response_id`, `response_description`, `response_date`.
+  <p dir="rtl"><strong>Support_Agent:</strong></p>
+  <p dir="rtl">ישות זו מייצגת את צוות התמיכה, כולל <code>agent_id</code>, <code>name</code>, ו-<code>role</code> (תפקיד הסוכן).</p>
+  <p dir="rtl">הסבר: ישות זו מאפשרת ניהול של הסוכנים אשר מטפלים בטיקטים ומגיבים לפניות.</p>
+</div>
 
-- **Support_Agent:**  
-  מזהה סוכן, שם, ותפקיד.
+## 2. קשרים בין ישויות
+<div dir="rtl">
+  <p dir="rtl"><strong>User ← Support_Tickets:</strong> אחד לרבים</p>
+  <p dir="rtl">הסבר: כל משתמש יכול להגיש מספר פניות, אבל כל פנייה שייכת למשתמש אחד בלבד.</p>
 
-### 2. קשרים בין ישויות:
+  <p dir="rtl"><strong>Issue_Types ← Support_Tickets:</strong> אחד לרבים</p>
+  <p dir="rtl">הסבר: כל פנייה שייכת לסוג בעיה אחד, אך כל סוג בעיה יכול להיות מקושר להרבה פניות.</p>
 
-- **User ← Support_Tickets:** אחד לרבים  
-- **Issue_Types ← Support_Tickets:** אחד לרבים  
-- **Support_Tickets ← Ticket_Status:** אחד לרבים  
-- **Support_Tickets ← Support_Responses:** אחד לרבים  
-- **Support_Agent ← Support_Responses:** אחד לרבים  
-- **Support_Agent ← Support_Tickets:** אחד לרבים
+  <p dir="rtl"><strong>Support_Tickets ← Ticket_Status:</strong> אחד לרבים</p>
+  <p dir="rtl">הסבר: כל פנייה יכולה לעבור מספר מצבים במהלך הטיפול בה (למשל "פתוח", "בתהליך", "סגור"), ולכן יש הרבה מצבים לכל טיקט, אך כל טיקט יכול להיות במצב אחד בכל רגע נתון.</p>
 
-### 3. תכונות (Attributes):
+  <p dir="rtl"><strong>Support_Tickets ← Support_Responses:</strong> אחד לרבים</p>
+  <p dir="rtl">הסבר: כל פנייה עשויה לקבל מספר תגובות ממספר סוכנים. כל תגובה מתייחסת לפנייה אחת בלבד, ולכן הקשר הוא אחד לרבים.</p>
 
-- כל ישות כוללת מזהה ייחודי (כגון `user_id`, `ticket_id`)
-- שדות נוספים רלוונטיים כמו `email`, `ticket_date`, `status`, וכו'.
+  <p dir="rtl"><strong>Support_Agent ← Support_Responses:</strong> אחד לרבים</p>
+  <p dir="rtl">הסבר: כל סוכן תמיכה יכול לתת מספר תגובות, אך כל תגובה ניתנת על ידי סוכן אחד בלבד.</p>
 
-### 4. קשרים מזהים (Identifying Relationships):
+  <p dir="rtl"><strong>Support_Agent ← Support_Tickets:</strong> אחד לרבים</p>
+  <p dir="rtl">הסבר: כל סוכן תמיכה יכול לטפל במספר פניות, אך כל פנייה מטופלת על ידי סוכן אחד בלבד.</p>
+</div>
 
-- *Support_Tickets ← Ticket_Status*
-- *Support_Tickets ← Support_Responses*  
-  מפתח הישות החלשה כולל את המפתח של הישות החזקה.
+## 3. קשרים מזהים (Identifying Relationships)
+<div dir="rtl">
+  <p dir="rtl"><strong>Support_Tickets ← Ticket_Status</strong></p>
+  <p dir="rtl">הקשר בין <code>Support_Tickets</code> ל-<code>Ticket_Status</code> הוא קשר מזהה, כלומר, כל שינוי במצב של פנייה תלוי בטיקט עצמו. מצב הטיקט תלוי בטיקט ולכן הקשר הוא מזהה.</p>
+  <p dir="rtl">הסבר: כל מצב טיפול נוצר כתגובה לפנייה מסוימת, ולכן הוא חלק אינהרנטי לפנייה. הפנייה עצמה יוצרת את המצב.</p>
 
-### 5. קשרים לא מזהים (Non-Identifying Relationships):
+  <p dir="rtl"><strong>Support_Tickets ← Support_Responses</strong></p>
+  <p dir="rtl">הקשר בין <code>Support_Tickets</code> ל-<code>Support_Responses</code> הוא קשר מזהה, כלומר כל תגובה מתייחסת לטיקט אחד בלבד. תגובה לא יכולה להתקיים ללא טיקט שמתחילה בו.</p>
+  <p dir="rtl">הסבר: כל תגובה שנשלחת מצד סוכן התמיכה מתייחסת לטיקט ספציפי ולכן יש לה קשר חזק אליו.</p>
+</div>
 
-- *User ← Support_Tickets*  
-- *Issue_Types ← Support_Tickets*  
-- *Support_Agent ← Support_Tickets / Support_Responses*  
-  קשרים אלו משתמשים במפתח זר בלבד, ללא תלות מלאה.
+## 4. קשרים לא מזהים (Non-Identifying Relationships)
+<div dir="rtl">
+  <p dir="rtl"><strong>User ← Support_Tickets</strong></p>
+  <p dir="rtl">הקשר בין <code>User</code> ל-<code>Support_Tickets</code> הוא קשר לא מזהה, מכיוון שכל פנייה שייכת למשתמש אחד, אבל המשתמש לא נדרש להיות חלק מהפנייה. הקשר הוא באמצעות מזהה זר בלבד.</p>
 
-### מטרת ההחלטות:
-יצירת מודל נתונים:
-- ברור
-- גמיש
-- תומך בפונקציונליות מלאה של המערכת
+  <p dir="rtl"><strong>Issue_Types ← Support_Tickets</strong></p>
+  <p dir="rtl">הקשר בין <code>Issue_Types</code> ל-<code>Support_Tickets</code> הוא גם לא מזהה, מכיוון שסוג הבעיה מתאר את הפנייה, אך אינו מהווה חלק אינהרנטי מהפנייה עצמה.</p>
 
----
+  <p dir="rtl"><strong>Support_Agent ← Support_Tickets / Support_Responses</strong></p>
+  <p dir="rtl">הקשר בין <code>Support_Agent</code> ל-<code>Support_Tickets</code> ו-<code>Support_Responses</code> הוא קשר לא מזהה. כל סוכן תמיכה יכול להיות קשור לכמה טיקטים או תגובות, אך כל סוכן נשאר עצמאי מהפנייה או מהתגובה. קשר זה מתבצע באמצעות מפתח זר.</p>
+</div>
 
+## 5. ישות חלשה
+<div dir="rtl">
+  <p dir="rtl">החלטנו ליצור ישות חלשה עבור <code>Support_Responses</code> ו-<code>Ticket_Status</code> מכיוון שהם לא יכולים להתקיים ללא קשר לפנייה מסוימת. תגובה ומצב הטיפול של פנייה קשורים באופן ישיר לפנייה וסטטוס הטיפול שלה, ולכן הם תלויים בטיקט הקיים. לא ניתן להבין את התגובה או המצב ללא קשר לפנייה, ולכן יש להם מפתח מזהה משותף עם הטיקט שאליו הם שייכים.</p>
+
+  <p dir="rtl"><strong>הסבר נוסף:</strong></p>
+  <p dir="rtl"><code>Ticket_Status</code> מהווה ישות חלשה משום שהיא לא יכולה להתקיים בלי טיקט מסוים, והמצב שלה משתנה כל הזמן במהלך הטיפול בטיקט.</p>
+  <p dir="rtl"><code>Support_Responses</code> גם היא ישות חלשה, משום שכל תגובה נכתבת כתוצאה ישירה מטיפול בטיקט ספציפי, ולכן היא תלויה בטיקט.</p>
+</div>
 ### תמונות נוספות:
 
 - ![צילום מסך של הקובץ פייתון](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/Programing/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-04-07%20215707.png)
