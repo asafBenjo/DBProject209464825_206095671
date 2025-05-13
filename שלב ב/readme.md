@@ -182,3 +182,46 @@ JOIN Support_Tickets st ON it.issue_type_id = st.issue_type_id
 WHERE it.issue_type_name = 'Buffering Issues';
 ```
 ![עדכון 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20up%20dete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20152734.png)
+
+
+# אילוצים
+## 1. בדיקה שבכל כתובת אימייל קיים @
+
+```sql
+ALTER TABLE "User"
+ADD CONSTRAINT chk_email_format
+CHECK (email LIKE '%@%');
+```
+נראה שאכן אי אפשר להכניס כתובת אימייל ללא @
+![עדכון 3]()
+
+
+## 2. מאלץ שלכל טיקט יהיה סטטוס ולא יהיה אפשר לשים ערך null
+
+```sql
+ALTER TABLE Ticket_Status 
+ALTER COLUMN status SET NOT NULL;
+```
+נראה שאכן אי אפשר לשים ערך null
+![עדכון 3]()
+
+## 3. מאלץ שבהינתן שלא הוכנס ערך לשדה priority אז יוכנס ערך ברירית מחדל 1
+
+```sql
+ALTER TABLE issue_types
+ALTER COLUMN priority SET DEFAULT 1;
+```
+נראה שאכן זה מכניס ערך ברירת מחדל 
+![עדכון 3]()
+
+# commit and rollback
+
+בדוגמה זו אנו מדגימים את השימוש בפקודות COMMIT ו־ROLLBACK כדי להבין כיצד מתבצעים שינויים זמניים בבסיס הנתונים.
+
+ראשית, מריצים COMMIT כדי לשמור את כל השינויים שבוצעו עד כה. לאחר מכן, אנחנו מעדכנים את הערך של status עבור status_id = 2 ל־'Resolved' ובודקים שהשינוי אכן התרחש בעזרת SELECT.
+
+לאחר מכן, מבצעים ROLLBACK שמבטל את כל השינויים שלא נשמרו אחרי ה-COMMIT. לבסוף, מריצים שוב SELECT כדי לראות שהערך חזר למצבו הקודם — כלומר, שהעדכון לא נשמר.
+
+![עדכון 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/comit%20and%20rollback/commit.png)
+![עדכון 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/comit%20and%20rollback/rollback.png)
+
