@@ -193,7 +193,7 @@ ADD CONSTRAINT chk_email_format
 CHECK (email LIKE '%@%');
 ```
 נראה שאכן אי אפשר להכניס כתובת אימייל ללא @
-![עדכון 3]()
+![אילוץ 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20%D7%90%D7%99%D7%9C%D7%95%D7%A6%D7%99%D7%9D/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20155610.png)
 
 
 ## 2. מאלץ שלכל טיקט יהיה סטטוס ולא יהיה אפשר לשים ערך null
@@ -203,7 +203,7 @@ ALTER TABLE Ticket_Status
 ALTER COLUMN status SET NOT NULL;
 ```
 נראה שאכן אי אפשר לשים ערך null
-![עדכון 3]()
+![אילוץ2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20%D7%90%D7%99%D7%9C%D7%95%D7%A6%D7%99%D7%9D/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20162110.png)
 
 ## 3. מאלץ שבהינתן שלא הוכנס ערך לשדה priority אז יוכנס ערך ברירית מחדל 1
 
@@ -212,8 +212,8 @@ ALTER TABLE issue_types
 ALTER COLUMN priority SET DEFAULT 1;
 ```
 נראה שאכן זה מכניס ערך ברירת מחדל 
-![עדכון 3]()
-
+![אילוץ3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20%D7%90%D7%99%D7%9C%D7%95%D7%A6%D7%99%D7%9D/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20163459.png)
+![אילוץ3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20%D7%90%D7%99%D7%9C%D7%95%D7%A6%D7%99%D7%9D/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20163524.png)
 # commit and rollback
 
 בדוגמה זו אנו מדגימים את השימוש בפקודות COMMIT ו־ROLLBACK כדי להבין כיצד מתבצעים שינויים זמניים בבסיס הנתונים.
