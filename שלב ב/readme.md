@@ -1,98 +1,135 @@
 # שאילתות SELECT
 
-## 1. משתמשים עם הכי הרבה פניות שממתינות למענה
+## 1. מחזירה משתמשים עם טיקטים שלא נפתרו
 
 ```sql
-SELECT u.username, u.email, COUNT(t.ticket_id) AS open_tickets
+SELECT DISTINCT t.ticket_id, u.username, u.email
 FROM "User" u
 JOIN Support_Tickets t ON u.user_id = t.user_id
 WHERE t.ticket_id IN (
-    SELECT ticket_id FROM Ticket_Status WHERE status = 'Waiting for Agent'
+    SELECT ticket_id
+    FROM Ticket_Status
+    WHERE status = 'Waiting for Agent'
 )
-GROUP BY u.username, u.email
-ORDER BY open_tickets DESC;
+AND t.ticket_id NOT IN (
+    SELECT ticket_id
+    FROM Ticket_Status
+    WHERE status = 'Resolved'
+)
 ```
 ![שאילתה 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%201.png)
 
 ## 2. זמן טיפול ממוצע לפי סוג בעיה
 
 ```sql
-SELECT it.issue_type_name,
-       AVG(EXTRACT(EPOCH FROM (ts.modified_date::timestamp - t.ticket_date::timestamp)) / 3600) AS avg_hours
-FROM Support_Tickets t
-JOIN Ticket_Status ts ON t.ticket_id = ts.ticket_id
-JOIN Issue_Types it ON t.issue_type_id = it.issue_type_id
-GROUP BY it.issue_type_name;
+SELECT 
+  issue_type_name,
+  ROUND(AVG(resolution_days), 2) AS avg_resolution_days
+FROM (
+  SELECT 
+    it.issue_type_name,
+    (MAX(ts.modified_date)::date - MIN(ts.modified_date)::date) AS resolution_days
+  FROM Ticket_Status ts
+  JOIN Support_Tickets t ON ts.ticket_id = t.ticket_id
+  JOIN Issue_Types it ON t.issue_type_id = it.issue_type_id
+  GROUP BY it.issue_type_name, ts.ticket_id
+  HAVING COUNT(DISTINCT ts.status) = 3
+) sub
+GROUP BY issue_type_name;
 ```
 ![שאילתה 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%202.png)
 
-## 3. מספר קריאות שטופלו ע"י נציג כל חודש
+## 3. מציאת 10 העובדים הכי פרודוקטיבים
 
 ```sql
-SELECT sa.support_agent_id, sa.agent_name,
-       TO_CHAR(t.ticket_date, 'YYYY-MM') AS year_month,
-       COUNT(DISTINCT t.ticket_id) AS tickets_handled
-FROM Support_Tickets t
-JOIN Support_Responses sr ON t.ticket_id = sr.ticket_id
-JOIN Support_Agent sa ON sr.support_agent_id = sa.support_agent_id
-GROUP BY sa.support_agent_id, sa.agent_name, TO_CHAR(t.ticket_date, 'YYYY-MM')
-ORDER BY sa.support_agent_id ASC, year_month ASC;
+WITH Productivity_Calculation AS (
+  SELECT 
+    SA.support_agent_id,
+    COUNT(DISTINCT R.ticket_id) AS tickets_resolved,
+    SA.Work_Hours,
+    ROUND(COUNT(DISTINCT R.ticket_id) * 1.0 / NULLIF(SA.Work_Hours, 0), 2) AS productivity_per_hour
+  FROM Support_Responses R
+  JOIN Support_agent SA ON R.support_agent_id = SA.support_agent_id
+  JOIN Ticket_Status TS ON R.ticket_id = TS.ticket_id
+  WHERE TS.status = 'Resolved'
+  GROUP BY SA.support_agent_id, SA.agent_name, SA.Work_Hours
+)
+SELECT *
+FROM (
+  SELECT 
+    *,
+    ROUND(productivity_per_hour / MAX(productivity_per_hour) OVER (), 2) * 100 AS productivity_score_out_of_100
+  FROM Productivity_Calculation
+) AS scored_agents
+ORDER BY productivity_score_out_of_100 DESC
+LIMIT 10;
+
 ```
 ![שאילתה 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%203.png)
 
-## 4. קריאות שטופלו בהצלחה (סטטוס Resolved) לכל משתמש
+## 4. מציאת טיקטים בעדיפות גבוהה שעדיין לא הוקצה להם סוכן
 
 ```sql
-SELECT u.user_id, u.username, COUNT(t.ticket_id) AS total_tickets
-FROM "User" u
-JOIN Support_Tickets t ON u.user_id = t.user_id
-WHERE t.ticket_id IN (
-    SELECT ticket_id FROM Ticket_Status WHERE status = 'Resolved'
-)
-GROUP BY u.user_id, u.username
-ORDER BY u.user_id ASC;
+SELECT 
+  ST.ticket_id,
+  IT.priority,
+  TS.status
+FROM Support_Tickets ST
+JOIN Issue_Types IT ON ST.issue_type_id = IT.issue_type_id
+JOIN Ticket_Status TS ON ST.ticket_id = TS.ticket_id
+WHERE IT.priority BETWEEN 4 AND 5
+  AND TS.modified_date = (
+      SELECT MAX(modified_date)
+      FROM Ticket_Status TS2
+      WHERE TS2.ticket_id = ST.ticket_id
+  )
+  AND TS.status IN ('Waiting for Agent')
+  
+
 ```
 ![שאילתה 4](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%204.png)
 
-## 5. פרטי קריאה, סטטוס אחרון ונציג
+## 5. מחזיר את כל הטיקטים שלא קיבלו תגובה לפחות חודש מהפתיחה
 
 ```sql
-SELECT u.user_id, u.username, sa.support_agent_id, sa.agent_name,
-       t.ticket_id, ts.status, ts.modified_date
-FROM Support_Tickets t
-JOIN "User" u ON t.user_id = u.user_id
-JOIN Ticket_Status ts ON t.ticket_id = ts.ticket_id
-JOIN Support_Responses sr ON t.ticket_id = sr.ticket_id
-JOIN Support_Agent sa ON sr.support_agent_id = sa.support_agent_id
-WHERE ts.modified_date = (
-    SELECT MAX(modified_date) FROM Ticket_Status WHERE ticket_id = t.ticket_id
-);
+SELECT 
+  ST.ticket_id,
+  ST.ticket_date
+FROM Support_Tickets ST
+LEFT JOIN Support_Responses SR ON ST.ticket_id = SR.ticket_id
+JOIN Issue_Types IT ON ST.issue_type_id = IT.issue_type_id
+WHERE SR.response_id IS NULL
+  AND DATE '2024-01-01' >= ST.ticket_date + INTERVAL '1 months'
+
 ```
 ![שאילתה 5](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%205.png)
 
-## 6. ממוצע תגובות לפי סוג בעיה
+## 6. מחזירה תדירות תקלות לפי נושאים על מנת להקצות את הסוכנים באופן חכם
 
 ```sql
-SELECT it.issue_type_name, AVG(response_count) AS avg_responses
-FROM (
-    SELECT t.issue_type_id, COUNT(sr.response_id) AS response_count
-    FROM Support_Tickets t
-    LEFT JOIN Support_Responses sr ON t.ticket_id = sr.ticket_id
-    GROUP BY t.ticket_id, t.issue_type_id
-) AS subq
-JOIN Issue_Types it ON subq.issue_type_id = it.issue_type_id
-GROUP BY it.issue_type_name;
+SELECT 
+  IT.issue_type_name AS topic,
+  COUNT(*) AS total_tickets,
+  RANK() OVER (ORDER BY COUNT(*) DESC) AS rank_by_frequency
+FROM Support_Tickets ST
+JOIN Issue_Types IT ON ST.issue_type_id = IT.issue_type_id
+GROUP BY IT.issue_type_name
+
 ```
 ![שאילתה 6](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%94%206.png)
 
-## 7. תגובות לקריאה מסוימת
+## 7. מחזיר את המשתמשים שפתחו הכי הרבה תקלות(לזהות לקוחות בעייתיים/בעלי צורך גבוהה בתמיכה)
 
 ```sql
-SELECT sr.response_description, sr.response_date, sa.agent_name
-FROM Support_Responses sr
-JOIN Support_Agent sa ON sr.support_agent_id = sa.support_agent_id
-WHERE sr.ticket_id = 123
-ORDER BY sr.response_date DESC;
+SELECT 
+  U.user_id,
+  U.username,
+  COUNT(*) AS total_tickets_opened,
+  RANK() OVER (ORDER BY COUNT(*) DESC) AS user_rank
+FROM Support_Tickets ST
+JOIN "User" U ON ST.user_id = U.user_id
+GROUP BY U.user_id, U.username
+HAVING COUNT(*) > 3
 ```
 
 ## 8. מספר תגובות של נציג לפי חודש
