@@ -56,8 +56,8 @@
 
 ### דיאגרמות:
 
-- ![צילום מסך של ERD](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/erd.png)
-- ![צילום מסך של DSD](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/dsd1.png)
+- ![צילום מסך של ERD](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/erd.png.jpg)
+- ![צילום מסך של DSD](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%90/dsd.png.jpg)
 
 ---
 
