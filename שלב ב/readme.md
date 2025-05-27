@@ -160,41 +160,24 @@ GROUP BY
 
 # DELETE
 
-## 1.  מחזיר את סוגי הקריאות בעלות עדיפות גבוהה ומה אחוז הקריאות שנפתרו מכל סוג
+## 1. השאילתה מוחקת טיקטים  שהסטטוס הוא 'Resolved' ותאריך העדכון הוא לפני ה־1 בפברואר 2023
 
 ```sql
-SELECT 
-    IT.issue_type_name,
-    IT.priority,
-    COUNT(DISTINCT ST.ticket_id) AS total_tickets,
-    COUNT(DISTINCT CASE WHEN TS.status = 'Resolved' THEN ST.ticket_id END) AS resolved_tickets,
-    ROUND(
-        COUNT(DISTINCT CASE WHEN TS.status = 'Resolved' THEN ST.ticket_id END) * 100.0 /
-        NULLIF(COUNT(DISTINCT ST.ticket_id), 0), 2
-    ) AS resolution_rate_percent
-FROM 
-    Issue_Types IT
-JOIN 
-    Support_Tickets ST ON IT.issue_type_id = ST.issue_type_id
-LEFT JOIN 
-    Ticket_Status TS ON ST.ticket_id = TS.ticket_id
-WHERE 
-    IT.priority >= 3 -- נחשב עדיפות גבוהה
-GROUP BY 
-    IT.issue_type_name, IT.priority
-
+DELETE FROM Ticket_Status
+WHERE status = 'Resolved'
+  AND modified_date < '2023-02-01';
 
 ```
 ![מחיקה 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20delete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-04-28%20164229.png)
 
 
-## 2. מחיקת תגובות לקריאות ישנות (לפני 6 במאי 2022)
+## 2. מחיקת תגובות לקריאות ישנות (לפני פבואר 2023)
 
 ```sql
 DELETE FROM Support_Responses
 WHERE ticket_id IN (
     SELECT ticket_id FROM Support_Tickets
-    WHERE ticket_date < '2022-05-06'
+    WHERE ticket_date < '2023-02-01'
 );
 ```
 ![מחיקה 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20delete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20151930.png)
@@ -211,12 +194,15 @@ WHERE support_agent_id NOT IN (
 
 # UPDATE
 
-## 1. עדכון סטטוס ל-Resolved
+## 1. שינוי רמת עדיפות לסטטוס שלא הסתיים ולא טופל מעל 60 יום 
 
 ```sql
-UPDATE Ticket_Status
-SET status = 'Resolved', modified_date = CURRENT_DATE
-WHERE status_id = '3';
+UPDATE Ticket_Status TS
+SET status_risk = 7
+FROM Support_Tickets ST
+WHERE TS.ticket_id = ST.ticket_id
+  AND TS.status != 'Resolved'
+  AND TS.modified_date >= ST.ticket_date + INTERVAL '60 days';
 ```
 ![עדכון 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20up%20dete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20141335.png)
 
