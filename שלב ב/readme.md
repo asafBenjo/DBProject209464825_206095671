@@ -148,16 +148,29 @@ ORDER BY sa.agent_name, year_month;
 
 # DELETE
 
-## 1.  מחיקת טיקטים שהסטטוס שלהם 'Resolved' ותאריך העדכון האחרון הוא יותר מחודש
+## 1.  מחזיר את סוגי הקריאות בעלות עדיפות גבוהה ומה אחוז הקריאות שנפתרו מכל סוג
 
 ```sql
-DELETE FROM Ticket_Status
-WHERE ticket_id IN (
-    SELECT ticket_id
-    FROM Ticket_Status
-    WHERE status = 'Resolved'
-      AND modified_date < (CURRENT_DATE - INTERVAL '1 month')
-);
+SELECT 
+    IT.issue_type_name,
+    IT.priority,
+    COUNT(DISTINCT ST.ticket_id) AS total_tickets,
+    COUNT(DISTINCT CASE WHEN TS.status = 'Resolved' THEN ST.ticket_id END) AS resolved_tickets,
+    ROUND(
+        COUNT(DISTINCT CASE WHEN TS.status = 'Resolved' THEN ST.ticket_id END) * 100.0 /
+        NULLIF(COUNT(DISTINCT ST.ticket_id), 0), 2
+    ) AS resolution_rate_percent
+FROM 
+    Issue_Types IT
+JOIN 
+    Support_Tickets ST ON IT.issue_type_id = ST.issue_type_id
+LEFT JOIN 
+    Ticket_Status TS ON ST.ticket_id = TS.ticket_id
+WHERE 
+    IT.priority >= 3 -- נחשב עדיפות גבוהה
+GROUP BY 
+    IT.issue_type_name, IT.priority
+
 
 ```
 ![מחיקה 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20delete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-04-28%20164229.png)
