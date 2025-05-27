@@ -17,7 +17,8 @@ AND t.ticket_id NOT IN (
     WHERE status = 'Resolved'
 )
 ```
-![שאילתה 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%201.png)
+![שאילתה 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/select1.png)
+)
 
 ## 2. זמן טיפול ממוצע לפי סוג בעיה
 
@@ -37,7 +38,7 @@ FROM (
 ) sub
 GROUP BY issue_type_name;
 ```
-![שאילתה 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%202.png)
+![שאילתה 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/select2.png)
 
 ## 3. מציאת 10 העובדים הכי פרודוקטיבים
 
@@ -65,7 +66,7 @@ ORDER BY productivity_score_out_of_100 DESC
 LIMIT 10;
 
 ```
-![שאילתה 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%203.png)
+![שאילתה 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/SELECT3.png)
 
 ## 4. מציאת טיקטים בעדיפות גבוהה שעדיין לא הוקצה להם סוכן
 
@@ -87,7 +88,7 @@ WHERE IT.priority BETWEEN 4 AND 5
   
 
 ```
-![שאילתה 4](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%204.png)
+![שאילתה 4](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/select4.png)
 
 ## 5. מחזיר את כל הטיקטים שלא קיבלו תגובה לפחות חודש מהפתיחה
 
@@ -102,7 +103,7 @@ WHERE SR.response_id IS NULL
   AND DATE '2024-01-01' >= ST.ticket_date + INTERVAL '1 months'
 
 ```
-![שאילתה 5](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%205.png)
+![שאילתה 5](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/select5.png)
 
 ## 6. מחזירה תדירות תקלות לפי נושאים על מנת להקצות את הסוכנים באופן חכם
 
@@ -116,7 +117,7 @@ JOIN Issue_Types IT ON ST.issue_type_id = IT.issue_type_id
 GROUP BY IT.issue_type_name
 
 ```
-![שאילתה 6](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%94%206.png)
+![שאילתה 6](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/select6.png)
 
 ## 7. מחזיר את המשתמשים שפתחו הכי הרבה תקלות(לזהות לקוחות בעייתיים/בעלי צורך גבוהה בתמיכה)
 
@@ -131,6 +132,8 @@ JOIN "User" U ON ST.user_id = U.user_id
 GROUP BY U.user_id, U.username
 HAVING COUNT(*) > 3
 ```
+
+![שאילתה 7](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/select7.png)
 
 ## 8. מחזיר את סוגי הקריאות בעלות עדיפות גבוהה ומה אחוז הקריאות שנפתרו מכל סוג
 
@@ -156,7 +159,7 @@ WHERE
 GROUP BY 
     IT.issue_type_name, IT.priority
 ```
-![שאילתה 8](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%208.png)
+![שאילתה 8](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/select8.png)
 
 # DELETE
 
@@ -168,7 +171,7 @@ WHERE status = 'Resolved'
   AND modified_date < '2023-02-01';
 
 ```
-![מחיקה 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20delete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-04-28%20164229.png)
+![מחיקה 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20delete/delet1.png)
 
 
 ## 2. מחיקת תגובות לקריאות ישנות (לפני פבואר 2023)
@@ -180,7 +183,7 @@ WHERE ticket_id IN (
     WHERE ticket_date < '2023-02-01'
 );
 ```
-![מחיקה 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20delete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20151930.png)
+![מחיקה 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20delete/DELET2.PNG)
 
 ## 3. מחיקת נציגים שלא הגיבו באף קריאה
 
@@ -204,7 +207,7 @@ WHERE TS.ticket_id = ST.ticket_id
   AND TS.status != 'Resolved'
   AND TS.modified_date >= ST.ticket_date + INTERVAL '60 days';
 ```
-![עדכון 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20up%20dete/%D7%A6%D7%99%D7%9C%D7%95%D7%9D%20%D7%9E%D7%A1%D7%9A%202025-05-06%20141335.png)
+![עדכון 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20up%20dete/updete1.png)
 
 ## 2. קידום נציגים לרמת Senior Agent
 
