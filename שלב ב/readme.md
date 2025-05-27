@@ -132,17 +132,29 @@ GROUP BY U.user_id, U.username
 HAVING COUNT(*) > 3
 ```
 
-## 8. מספר תגובות של נציג לפי חודש
+## 8. מחזיר את סוגי הקריאות בעלות עדיפות גבוהה ומה אחוז הקריאות שנפתרו מכל סוג
+
 
 ```sql
-SELECT sa.agent_name,
-       TO_CHAR(sr.response_date, 'YYYY-MM') AS year_month,
-       COUNT(sr.response_id) AS responses_count,
-       MAX(sr.response_date) AS last_response_date
-FROM Support_Responses sr
-JOIN Support_Agent sa ON sr.support_agent_id = sa.support_agent_id
-GROUP BY sa.agent_name, TO_CHAR(sr.response_date, 'YYYY-MM')
-ORDER BY sa.agent_name, year_month;
+SELECT 
+    IT.issue_type_name,
+    IT.priority,
+    COUNT(DISTINCT ST.ticket_id) AS total_tickets,
+    COUNT(DISTINCT CASE WHEN TS.status = 'Resolved' THEN ST.ticket_id END) AS resolved_tickets,
+    ROUND(
+        COUNT(DISTINCT CASE WHEN TS.status = 'Resolved' THEN ST.ticket_id END) * 100.0 /
+        NULLIF(COUNT(DISTINCT ST.ticket_id), 0), 2
+    ) AS resolution_rate_percent
+FROM 
+    Issue_Types IT
+JOIN 
+    Support_Tickets ST ON IT.issue_type_id = ST.issue_type_id
+LEFT JOIN 
+    Ticket_Status TS ON ST.ticket_id = TS.ticket_id
+WHERE 
+    IT.priority >= 3 -- נחשב עדיפות גבוהה
+GROUP BY 
+    IT.issue_type_name, IT.priority
 ```
 ![שאילתה 8](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%91/%D7%A6%D7%99%D7%9C%D7%95%D7%9E%D7%99%20select/%D7%A9%D7%90%D7%99%D7%9C%D7%AA%D7%90%208.png)
 
