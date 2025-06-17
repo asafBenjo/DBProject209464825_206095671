@@ -129,65 +129,93 @@ REFERENCES discounts(discount_id);
 
 
 ##מבטים
-מבט 1
 
+# View 1: Full_Customer_Info_View1
+
+מבט מנקודת המבט של שירות הלקוחות  
+מטרת ה־View הזה היא לרכז את כל המידע הרלוונטי עבור נציגי שירות הלקוחות:
+
+- פרטי הלקוח (שם משתמש, דוא"ל, תוכנית מנויים, הנחה)  
+- פרטי התשלום האחרון שביצע  
+- התקלה האחרונה שדווחה  
+- סטטוס התקלה האחרון ורמת הסיכון שלה  
+
+באמצעות מידע זה, נציג השירות יכול להבין את הרקע הכללי של הלקוח, לראות האם יש בעיות פעילות או לא פתורות, והאם יש סיכון מתמשך.
+
+![תמונה View 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/view1.jpg)
+
+sql
 CREATE VIEW Full_Customer_Info_View1 AS
 WITH LatestPayment AS (
-    SELECT
-        p.user_id,
-        p.amount,
-        p.payment_date,
-        ROW_NUMBER() OVER(PARTITION BY p.user_id ORDER BY p.payment_date DESC) as rn
-    FROM payments p
-),
-LatestTicket AS (
-    SELECT
-        t.user_id,
-        t.ticket_id,
-        t.issue_description,
-        t.ticket_date,
-        ROW_NUMBER() OVER(PARTITION BY t.user_id ORDER BY t.ticket_date DESC) as trn
-    FROM support_tickets t
-),
-LatestTicketStatus AS (
-    SELECT
-        s.ticket_id,
-        s.status,
-        s.status_risk,
-        s.modified_date,
-        ROW_NUMBER() OVER(PARTITION BY s.ticket_id ORDER BY s.modified_date DESC) as srn
-    FROM ticket_status s
+    ...
 )
-SELECT
-    u.user_id,
-    u.username,
-    u.email,
-    u.customer_name,
-    sp.plan_type,
-    sp.monthly_cost,
-    d.discount_percent,
-    lp.amount AS last_payment_amount,
-    lp.payment_date,
-    lt.ticket_id,
-    lt.issue_description,
-    lt.ticket_date,
-    lts.status,
-    lts.status_risk,
-    lts.modified_date
-FROM "User" u
-LEFT JOIN subscription_plans sp ON u.plan_id = sp.plan_id
-LEFT JOIN discounts d ON u.discount_id = d.discount_id
-LEFT JOIN LatestPayment lp ON u.user_id = lp.user_id AND lp.rn = 1
-LEFT JOIN LatestTicket lt ON u.user_id = lt.user_id AND lt.trn = 1
-LEFT JOIN LatestTicketStatus lts ON lt.ticket_id = lts.ticket_id AND lts.srn = 1
-ORDER BY u.user_id; -- Added ORDER BY to sort by user_id
+...
+ORDER BY u.user_id;
 
+
+## שאילתה 1: בדיקת כל המידע עבור לקוח בשם 'Ellery'
+
+שימושי לזיהוי היסטוריה אחרונה של לקוח ספציפי, לדוגמה כאשר הוא פונה לתמיכה.
+
+sql
 SELECT *
 FROM Full_Customer_Info_View1
 WHERE username = 'Ellery';
 
-  SELECT DISTINCT username, last_payment_amount, status, status_risk
+![שאילתה 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/select11.jpg)
+
+## שאילתה 2: לקוחות עם תשלום גבוה ובעיה פתוחה עם סיכון גבוה
+
+השאילתה מסייעת לזהות לקוחות "יקרים" עם תקלות שלא נפתרו, במיוחד כאלה שעשויות להשפיע על שביעות הרצון והנטישה.
+
+sql
+SELECT DISTINCT username, last_payment_amount, status, status_risk
 FROM Full_Customer_Info_View1
 WHERE last_payment_amount > 5000
   AND status != 'Resolved'
-  AND status_risk >= 5;בב
+  AND status_risk >= 5;
+
+![שאילתה 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/select12.jpg)
+
+# View 2: Customer_Status_Summary_View
+
+מבט מנקודת המבט של צוות הניתוח העסקי  
+המבט הזה מספק מידע מסוכם על כל לקוח:
+
+- פרטי מנוי  
+- מספר הסטטוסים (תקלות/תשובות/עדכונים) שהיו לו לאורך הזמן  
+
+מטרת המבט היא להציג מגמות כלליות לגבי לקוחות, למשל האם לקוחות בתוכנית מסוימת חווים יותר תקלות.
+
+![תמונה View 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/view2.jpg)
+
+sql
+CREATE VIEW Customer_Status_Summary_View AS
+SELECT ...
+GROUP BY ...
+ORDER BY u.user_id;
+
+
+## שאילתה 3: לקוחות בתוכנית 'premium' עם יותר מ־6 סטטוסים
+
+מועיל לבדוק אם לקוחות שמשלמים הרבה חווים בעיות רבות, מה שעלול להעיד על בעיה במוצר או השירות לתוכנית הזו.
+
+sql
+SELECT *
+FROM Customer_Status_Summary_View
+WHERE plan_type = 'premium'
+  AND total_status_count > 10;
+
+![שאילתה 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/select21.jpg)
+
+## שאילתה 4: סיכום סטטוסים ללקוח בשם 'Kassia'
+
+מאפשר להבין כמה אינטראקציות היו עם הלקוח הזה ולאיזה סוג מנוי הוא שייך.
+
+sql
+SELECT *
+FROM Customer_Status_Summary_View
+WHERE username = 'Kassia';
+
+![שאילתה 4](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/select22.jpg)
+
