@@ -10,125 +10,128 @@
 משותף dsd
 ![צילום מסך](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/dsd.jpg)
 
-# 🔄 אינטגרציית טבלאות: מיזוג subscriptions עם User
+#  אינטגרציית טבלאות: מיזוג subscriptions עם User
 
 במסגרת שלב האינטגרציה בפרויקט, בחרנו לאחד את טבלת subscriptions לתוך טבלת User. להלן תיאור השינויים שבוצעו ומטרתם:
 
 ---
 
-## ✅ הוספת שדות לטבלת User
+##  הוספת שדות לטבלת User
 
-sql
+```sql
 ALTER TABLE "User"
 ADD COLUMN customer_name TEXT,
 ADD COLUMN plan_id INTEGER,
 ADD COLUMN discount_id INTEGER;
+```
 
 
-📌 *מטרה:* הוספת שדות מתוך טבלת subscriptions לתוך User, כהכנה למחיקת הטבלה המקורית.
+ *מטרה:* הוספת שדות מתוך טבלת subscriptions לתוך User, כהכנה למחיקת הטבלה המקורית.
 
 ---
 
-## ✏ שינוי סוג עמודת customer_name
+##  שינוי סוג עמודת customer_name
 
-sql
+```sql
 ALTER TABLE "User"
 ALTER COLUMN customer_name TYPE varchar(40);
+```
 
 
-📌 *מטרה:* הגבלת אורך השדה ל־40 תווים, לשמירה על תקינות ואחידות הנתונים.
+ *מטרה:* הגבלת אורך השדה ל־40 תווים, לשמירה על תקינות ואחידות הנתונים.
 
 ---
 
-## 📥 העתקת נתונים מטבלת subscriptions ל־User
+##  העתקת נתונים מטבלת subscriptions ל־User
 
-sql
+```sql
 UPDATE "User" U
 SET plan_id = S.plan_id,
     discount_id = S.discount_id,
     customer_name = S.customer_name
 FROM subscriptions S
 WHERE U.user_id = S.subscription_id;
+```
 
 
-📌 *מטרה:* העברת הנתונים הרלוונטיים מהטבלה subscriptions אל הטבלה User.
+ *מטרה:* העברת הנתונים הרלוונטיים מהטבלה subscriptions אל הטבלה User.
 
 ---
 
-## 🔄 שינוי שם עמודה בטבלת Payments
+##  שינוי שם עמודה בטבלת Payments
 
-sql
+```sql
 ALTER TABLE Payments
 RENAME COLUMN subscription_id TO user_id;
+```
 
-
-📌 *מטרה:* עדכון שם העמודה כך שתשקף את הקשר החדש בין Payments ל־User.
+ *מטרה:* עדכון שם העמודה כך שתשקף את הקשר החדש בין Payments ל־User.
 
 ---
 
-## 🗑 הסרת קשר ישן בין Payments ל־subscriptions
+##  הסרת קשר ישן בין Payments ל־subscriptions
 
-sql
+```sql
 ALTER TABLE Payments
 DROP CONSTRAINT IF EXISTS payments_subscription_id_fkey;
+```
 
-
-📌 *מטרה:* מחיקת קשר חוץ שכבר אינו רלוונטי לאחר האינטגרציה.
+ *מטרה:* מחיקת קשר חוץ שכבר אינו רלוונטי לאחר האינטגרציה.
 
 ---
 
-## 🔗 יצירת קשר חדש בין Payments ל־User
+##  יצירת קשר חדש בין Payments ל־User
 
-sql
+```sql
 ALTER TABLE Payments
 ADD CONSTRAINT fk_payments_user
 FOREIGN KEY (user_id)
 REFERENCES Users(user_id);
+```
 
-
-📌 *מטרה:* הגדרת קשר חוץ חדש בהתאם למבנה החדש, בו Payments מתייחס ישירות ל־User.
+ *מטרה:* הגדרת קשר חוץ חדש בהתאם למבנה החדש, בו Payments מתייחס ישירות ל־User.
 
 ---
 
-## 🗑 מחיקת טבלת subscriptions
+##  מחיקת טבלת subscriptions
 
-sql
+```sql
 DROP TABLE IF EXISTS subscriptions CASCADE;
+```
 
-
-📌 *מטרה:* מחיקת הטבלה שכבר הועתקה לתוך User ואין בה צורך יותר.
+ *מטרה:* מחיקת הטבלה שכבר הועתקה לתוך User ואין בה צורך יותר.
 
 ---
 
-## 🔗 יצירת קשר בין User ל־subscription_plans
+##  יצירת קשר בין User ל־subscription_plans
 
-sql
+```sql
 ALTER TABLE "User"
 ADD CONSTRAINT fk_users_plan
 FOREIGN KEY (plan_id)
 REFERENCES subscription_plans(plan_id);
+```
 
-
-📌 *מטרה:* שמירה על הקשר בין משתמשים לתוכניות המנויים שלהם גם לאחר המעבר לטבלה המאוחדת.
+ *מטרה:* שמירה על הקשר בין משתמשים לתוכניות המנויים שלהם גם לאחר המעבר לטבלה המאוחדת.
 
 ---
 
-## 🔗 יצירת קשר בין User ל־discounts
+##  יצירת קשר בין User ל־discounts
 
-sql
+```sql
 ALTER TABLE "User"
 ADD CONSTRAINT fk_users_discount
 FOREIGN KEY (discount_id)
 REFERENCES discounts(discount_id);
+```
+
+ *מטרה:* שמירה על הקשר בין משתמשים להנחות שהוגדרו להם.
 
 
-📌 *מטרה:* שמירה על הקשר בין משתמשים להנחות שהוגדרו להם.
 
 
 
-
-
-##מבטים
+## מבטים
 
 # View 1: Full_Customer_Info_View1
 
