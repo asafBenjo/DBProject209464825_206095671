@@ -149,7 +149,6 @@ REFERENCES discounts(discount_id);
 
 באמצעות מידע זה, נציג השירות יכול להבין את הרקע הכללי של הלקוח, לראות האם יש בעיות פעילות או לא פתורות, והאם יש סיכון מתמשך.
 
-![תמונה View 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/view1.jpg)
 
 ```sql
 CREATE VIEW Full_Customer_Info_View1 AS
@@ -204,6 +203,8 @@ LEFT JOIN LatestTicketStatus lts ON lt.ticket_id = lts.ticket_id AND lts.srn = 1
 ORDER BY u.user_id; -- Added ORDER BY to sort by user_id
 ```
 
+![תמונה View 1](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/view1.jpg)
+
 
 ## שאילתה 1: בדיקת כל המידע עבור לקוח בשם 'Ellery'
 
@@ -241,7 +242,6 @@ WHERE last_payment_amount > 5000
 
 מטרת המבט היא להציג מגמות כלליות לגבי לקוחות, למשל האם לקוחות בתוכנית מסוימת חווים יותר תקלות.
 
-![תמונה View 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/view2.jpg)
 
 ```sql
 CREATE VIEW Customer_Status_Summary_View AS
@@ -263,7 +263,10 @@ GROUP BY
     sp.plan_type, sp.monthly_cost
 ORDER BY u.user_id; -- הוספנו מיון לפי user_id
 
-```sql
+```
+
+![תמונה View 2](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/view2.jpg)
+
 
 
 ## שאילתה 3: לקוחות בתוכנית 'premium' עם יותר מ־6 סטטוסים
@@ -275,7 +278,7 @@ SELECT *
 FROM Customer_Status_Summary_View
 WHERE plan_type = 'premium'
   AND total_status_count > 10;
-```sql
+```
 
 ![שאילתה 3](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/select21.jpg)
 
@@ -287,7 +290,7 @@ WHERE plan_type = 'premium'
 SELECT *
 FROM Customer_Status_Summary_View
 WHERE username = 'Kassia';
-```sql
+```
 
 
 ![שאילתה 4](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%92/select22.jpg)
