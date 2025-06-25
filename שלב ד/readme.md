@@ -1,36 +1,20 @@
-# שלב ד
 
 # שלב ד – תוכניות ב־PL/pgSQL ו־Triggers
 
 ## 🎯 מטרה
 בשלב זה כתבנו פונקציות, פרוצדורות, טריגרים ותוכניות ראשיות לעבודה עם בסיס הנתונים.  
+הקבצים צורפו לתיקיית `שלב ד` והועלה TAG מתאים ב־Git.
 
 
-## תוכניות ראשיות
-
-### תוכנית ראשית 1
-```sql
-DO $$
-BEGIN
-    PERFORM CountUnresolvedTicketsPerUser();
-    CALL EvaluateAgentPerformance(); 
-END;
-$$ LANGUAGE plpgsql;
-```
-
-### תוכנית ראשית 2
-```sql
-DO $$
-BEGIN
-    PERFORM SuggestPremiumUpgrade();
-    CALL GiveFreeMonthForSlowResponse();
-END;
-$$ LANGUAGE plpgsql;
-```
 
 ## פונקציות
 
 ### פונקציה 1: CountUnresolvedTicketsPerUser
+#### תיאור:
+פונקציה זו סורקת את כלל המשתמשים ובודקת לכל אחד מהם כמה תקלות עדיין פתוחות (שאינן 'Resolved').  
+אם נמצאו מעל 4 תקלות פתוחות למשתמש מסוים, תופיע התראה באמצעות `RAISE NOTICE`.  
+📌 מטרת הפונקציה: לאפשר זיהוי משתמשים שיש להם עומס תקלות חריג – דבר שעשוי להעיד על בעיות חמורות או תסכול מצטבר מצד הלקוח.
+
 ```sql
 CREATE OR REPLACE FUNCTION CountUnresolvedTicketsPerUser()
 RETURNS void AS $$
@@ -53,7 +37,14 @@ END;
 $$ LANGUAGE plpgsql; 
 ```
 
+![צילום מסך](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%93/%D7%A4%D7%95%D7%A0%D7%A7%D7%A6%D7%99%201.jpg)
+
+
 ### פונקציה 2: SuggestPremiumUpgrade
+#### תיאור:
+הפונקציה מאתרת משתמשים עם מנוי 'basic' שנמצאים איתנו למעלה משנה, וממליצה להם לשדרג למנוי Premium תוך הצעת הטבה.  
+📌 מטרת הפונקציה: שיפור שיווקי ושימור לקוחות ותיקים על־ידי עידוד שדרוג. ובנוסף קבלת רווח לחברה על ידי שדרוג תוכנית המנוי של המשתמש.
+
 ```sql
 CREATE OR REPLACE FUNCTION SuggestPremiumUpgrade()
 RETURNS void AS $$
@@ -79,10 +70,16 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 ```
+![צילום מסך](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%93/%D7%A4%D7%95%D7%A0%D7%A7%D7%A6%D7%99%D7%94%202.jpg)
 
 ## פרוצדורות
 
 ### פרוצדורה 1: EvaluateAgentPerformance
+#### תיאור:
+הפרוצדורה מחשבת את מספר התקלות שכל סוכן פתר ביחס לשעות העבודה שלו ומייצרת מדד פרודוקטיביות.  
+אם סוכן עם פרודוקטיביות נמוכה מזוהה, מודפסת התרעה מתאימה.  
+📌 חשיבות: ניטור ביצועים של סוכנים באופן רציף לצורך שיפור איכות השירות וקבלת החלטות ניהוליות.
+
 ```sql
 CREATE OR REPLACE PROCEDURE EvaluateAgentPerformance()
 LANGUAGE plpgsql
@@ -119,8 +116,13 @@ BEGIN
 END;
 $$; 
 ```
+![צילום מסך](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%93/%D7%A4%D7%A8%D7%95%D7%A6%D7%93%D7%95%D7%A8%D7%94%201.jpg)
 
 ### פרוצדורה 2: GiveFreeMonthForSlowResponse
+#### תיאור:
+הפרוצדורה מעניקה חודש חינם למשתמשים עבור תקלות שקיבלו תגובה ראשונית רק לאחר יותר מ־100 ימים.  
+📌 מטרת הפעולה: שמירה על שביעות רצון הלקוח ופיצוי אוטומטי למצבים חריגים של שירות איטי.
+
 ```sql
 CREATE OR REPLACE PROCEDURE GiveFreeMonthForSlowResponse()
 LANGUAGE plpgsql
@@ -148,8 +150,10 @@ BEGIN
 END;
 $$;
 ```
+### הוספת עמודה 
+#### בשביל לייצר את הפרוצדורה הזאת היינו צריכים להוסיף עמודה למשתמש - שתציג מתי מסתיים המנוי שלו, ולאחר מכן אפשר היה להוסיף לו עוד חודש חינם
 
-### תוספת טור
+
 ```sql
 ALTER TABLE "User"
 ADD COLUMN subscription_end_date DATE;
@@ -158,9 +162,17 @@ UPDATE "User"
 SET subscription_end_date = CURRENT_DATE + INTERVAL '12 month'; 
 ```
 
+![צילום מסך](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%93/%D7%A4%D7%A8%D7%9F%D7%A6%D7%93%D7%95%D7%A8%D7%94%202.jpg)
+
 ## טריגרים
 
-### טריגר 1: create_high_risk_alert
+### טריגר 1: 
+#### תיאור:
+טריגר זה מופעל כאשר מוכנסת או מתעדכנת תקלה עם רמת סיכון גבוהה (מעל 7).  
+הוא מייצר באופן אוטומטי רשומה בטבלת `alerts` עם פרטי ההתראה.  
+📌 מטרת הטריגר: לאפשר התראה מיידית על תקלות חמורות הדורשות טיפול מיידי.
+##### הפונקציה של הטריגר - create_high_risk_alert
+
 ```sql
 CREATE FUNCTION create_high_risk_alert() RETURNS trigger AS $$
 BEGIN
@@ -177,7 +189,9 @@ END;
 $$ LANGUAGE plpgsql;
 ```
 
-### יצירת טבלת alerts
+### יצירת טבלת alerts 
+#### בשביל לעשות את הטריגר הזה היינו צריכים להוסיף טבלה שתכיל את ההתראות
+
 ```sql
 CREATE TABLE IF NOT EXISTS alerts (
     alert_id SERIAL PRIMARY KEY,
@@ -201,8 +215,16 @@ EXECUTE FUNCTION create_high_risk_alert();
 INSERT INTO Ticket_Status (status_id, status_risk, status, modified_date, ticket_id)
 VALUES (66666, 9, 'Escalated', '2023-11-12', 345);
 ```
+### תמונה שמראה את הצלחת הבדיקה:
+![צילום מסך](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%93/%D7%98%D7%A8%D7%99%D7%92%D7%A8%201.jpg)
 
-### טריגר 2: insert_initial_ticket_status
+
+### טריגר 2: 
+#### תיאור:
+טריגר זה מופעל אוטומטית בעת יצירת קריאת שירות חדשה (`Support_Tickets`) ויוצר לה סטטוס פתיחה ברירת מחדל (`Opened`).  
+📌 חשיבות: מבטיח עקביות בין טבלאות ומונע מצב שבו נפתחת תקלה ללא סטטוס ראשוני.
+#### פונקצית הטריגר - insert_initial_ticket_status
+
 ```sql
 CREATE OR REPLACE FUNCTION insert_initial_ticket_status()
 RETURNS trigger AS $$
@@ -227,4 +249,30 @@ EXECUTE FUNCTION insert_initial_ticket_status();
 ```sql
 INSERT INTO Support_Tickets (ticket_id, user_id, ticket_date, issue_type_id, issue_description)
 VALUES (5500,123, CURRENT_DATE, 2, 'בעיית התחברות');
+```
+
+#### תמונה להמחשה: 
+![צילום מסך](https://github.com/asafBenjo/DBProject209464825_206095671/blob/main/%D7%A9%D7%9C%D7%91%20%D7%93/%D7%98%D7%A8%D7%99%D7%92%D7%A8%202.jpg)
+
+
+## תוכניות ראשיות
+
+### תוכנית ראשית 1
+```sql
+DO $$
+BEGIN
+    PERFORM CountUnresolvedTicketsPerUser();
+    CALL EvaluateAgentPerformance(); 
+END;
+$$ LANGUAGE plpgsql;
+```
+
+### תוכנית ראשית 2
+```sql
+DO $$
+BEGIN
+    PERFORM SuggestPremiumUpgrade();
+    CALL GiveFreeMonthForSlowResponse();
+END;
+$$ LANGUAGE plpgsql;
 ```
