@@ -34,17 +34,6 @@ ADD COLUMN discount_id INTEGER;
 
 ---
 
-##  שינוי סוג עמודת customer_name
-
-```sql
-ALTER TABLE "User"
-ALTER COLUMN customer_name TYPE varchar(40);
-```
-
-
- *מטרה:* הגבלת אורך השדה ל־40 תווים, לשמירה על תקינות ואחידות הנתונים.
-
----
 
 ##  העתקת נתונים מטבלת subscriptions ל־User
 
